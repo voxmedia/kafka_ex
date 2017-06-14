@@ -49,6 +49,7 @@ defmodule KafkaEx.Protocol.Fetch do
   def parse_response(<< _correlation_id :: 32-signed, topics_size :: 32-signed, rest :: binary>>) do
     parse_topics(topics_size, rest, __MODULE__)
   end
+  def parse_response(nil), do: []
 
   def parse_partitions(0, rest, partitions), do: {partitions, rest}
   def parse_partitions(partitions_size, << partition :: 32-signed, error_code :: 16-signed, hw_mark_offset :: 64-signed,
