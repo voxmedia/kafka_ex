@@ -332,15 +332,15 @@ Optional arguments(KeywordList)
   defp current_offset(supplied_offset, partition, topic, worker_name) do
     case supplied_offset do
       nil ->
-        last_offset  = worker_name
-          |> offset_fetch(%OffsetFetchRequest{topic: topic, partition: partition})
-          |> OffsetFetchResponse.last_offset
+        next_offset = topic
+        |> latest_offset(partition)
+        |> OffsetResponse.extract_offset()
 
-        if last_offset < 0 do
+        if next_offset < 0 do
           earliest_offset(topic, partition, worker_name)
           |> OffsetResponse.extract_offset
         else
-          last_offset + 1
+          next_offset
         end
       _   -> supplied_offset
     end
